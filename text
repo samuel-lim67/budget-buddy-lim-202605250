@@ -1,0 +1,45 @@
+with column1:
+    month = st.selectbox("Select a month", months, width=600)
+    st.caption("_Last 30 days_")
+
+    st.markdown(f"# {month}")
+    category, amount = st.columns(2)
+    with category:
+        st.markdown("## This Month's Budget\n\n")
+        st.markdown("")
+        st.write("**Category**")
+        for category_ in budget:
+            if category_["month"] == month:
+                st.write(category_["category"])
+            else:
+                continue
+    with amount:
+        st.write("**Amount**")
+        total = 0
+        for amount_ in budget:
+            if amount_["month"] == month:
+                st.write(f"₱{amount_['planned_amount']}")
+                total += amount_['planned_amount']
+            else:
+                continue
+        st.text(f"₱{total}")
+
+with column2:
+    search_category = st.text_input("Search")
+    st.button("wtf")
+    st.html("""
+    <style>
+    .my-button {
+        background-color: black;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+    }
+
+    .my-button:hover {
+        background-color: gray;
+    }
+    </style>
+
+    <button class="my-button">Add Expense</button>
+    """)
