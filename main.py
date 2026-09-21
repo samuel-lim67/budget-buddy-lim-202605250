@@ -10,9 +10,15 @@ for entry in budget:
     if entry["month"] not in months:
         months.append(entry["month"])
 
+selected_months = []
 with st.sidebar:
-    st.sidebar.selectbox("Please select a budget option", options=months, key="selected_month", accept_new_options=True, persist_state="session")
+    for month in months:
+        if st.checkbox(month):
+            selected_months.append(month)
 
-pages = [st.Page("dashboard_page.py", title="My Dashboard"),st.Page("budget_page.py", title="Budget Overview"), st.Page("expense_page.py", title="Expense Tracker")]
+st.session_state["selected_months"] = selected_months
+    #st.sidebar.selectbox("Please select a budget option", options=months, key="selected_month", accept_new_options=True, persist_state="session")
+
+pages = {"My Dashboard": [st.Page("dashboard_page.py", title="Overview"),st.Page("budget_page.py", title="Budget Overview"), st.Page("expense_page.py", title="Expense Tracker")]}
 pg = st.navigation(pages)
 pg.run()
