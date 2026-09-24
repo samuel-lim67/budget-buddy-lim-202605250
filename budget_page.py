@@ -77,15 +77,37 @@ def progress_bar():
     st.markdown(f"### **Budget Used**: ₱{(total_budget()-remaining_budget()):.2f}")
     st.markdown(f"### **Remaining Budget**: ₱{remaining_budget():.2f}")
 
+@st.dialog("Are you sure you want to do this?")
+def delete_category(category_):
+    st.markdown("You won't be able to recover your data")
+    yes, no = st.columns(2)
+    with yes:
+        if st.button("Yes"):
+            for entry in budget:
+                if category_ == entry["category"]:
+                    budget.remove(entry)
+                    save_budget_data(budget)
+                    st.toast(f"Successfully deleted {category_}")
+                    st.rerun()
+                else:
+                    continue
+    with no:
+        if st.button("No"):
+            st.rerun()
+
 def row_display(category_, allocation_):
-    category, amount, popover = st.columns([1,1,0.2])
+    category, amount, popover = st.columns([1,1,0.5])
 
     with category:  # displays the categories
         st.markdown(category_)
     with amount:  # displays the amounts for each category
         st.markdown(f"₱{allocation_:.2f}")
     with popover:
-        st.popover("⋮", type="tertiary", key=category_)
+        with st.popover("⋮", type="tertiary", key=f"{category_}_popover", width=10):
+            if st.button("Edit", key=f"{category_}_edit"):
+                pass
+            if st.button("Delete", key=f"{category_}_delete"):
+                delete_category(category_)
 
 budget_allocation = get_categories()
 categories = budget_allocation.keys()
@@ -109,7 +131,7 @@ else:
         progress_bar()
 
     with column1:
-        category, amount, popover = st.columns([1,1,0.2])
+        category, amount, popover = st.columns([1,1,0.5])
         with popover:
             st.space(size="xsmall")
         with category:
