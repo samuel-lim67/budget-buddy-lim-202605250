@@ -77,6 +77,16 @@ def progress_bar():
     st.markdown(f"### **Budget Used**: ₱{(total_budget()-remaining_budget()):.2f}")
     st.markdown(f"### **Remaining Budget**: ₱{remaining_budget():.2f}")
 
+def row_display(category_, allocation_):
+    category, amount, popover = st.columns([1,1,0.2])
+
+    with category:  # displays the categories
+        st.markdown(category_)
+    with amount:  # displays the amounts for each category
+        st.markdown(f"₱{allocation_:.2f}")
+    with popover:
+        st.popover("⋮", type="tertiary", key=category_)
+
 budget_allocation = get_categories()
 categories = budget_allocation.keys()
 allocation = budget_allocation.values()
@@ -95,30 +105,26 @@ else:
     with column2:
         if st.button("+ Add Category", disabled=remaining_budget() <= 0,  help="No remaining budget available." if remaining_budget() <= 0 else None): # checks if u even have space in the budget to add a new category
             add_category()
-        if st.button("- Remove Category"):
-            pass
-        st.multiselect("test", options=categories, key="selected_categories")
+        st.multiselect("View Specific Category", options=categories, key="selected_categories")
         progress_bar()
 
     with column1:
-        category, amount = st.columns(2)
-        st.divider()
-
-        with category: #displays the categories
+        category, amount, popover = st.columns([1,1,0.2])
+        with popover:
+            st.space(size="xsmall")
+        with category:
             st.markdown("## Category")
-            for category_ in categories:
-                if not st.session_state["selected_categories"]:
-                    st.markdown(category_)
-                else:
-                    if category_ in st.session_state["selected_categories"]:
-                        st.markdown(category_)
-        with amount: #displays the amounts for each category
+        with amount:
             st.markdown("## Amount Allocated")
-            if not st.session_state["selected_categories"]:
-                for _ in allocation:
-                    st.markdown(_)
+        for category_, allocation_ in budget_allocation.items():
+
+            if not st.session_state["selected_categories"]: #automatically displays everything if nothings selected
+                row_display(category_, allocation_)
+
+            elif category_ not in st.session_state["selected_categories"]: #makes sure that there isnt just a bunch of spaces when u select a category that starts in the middle of the list
+                continue
+
             else:
-                for category in st.session_state["selected_categories"]:
-                    st.markdown(f"₱{budget_allocation[category]}")
+                row_display(category_, allocation_)
 
-
+    st.divider()
