@@ -62,6 +62,8 @@ def add_category():
     if st.button("Create"):
         if not name.strip():
             st.error("Please enter a name for the category!")
+        elif name.strip().lower() in [category.strip().lower() for category in categories]:
+            st.error("Category already exists!")
         elif category_amount == 0:
             st.rerun()
         else:
@@ -75,6 +77,10 @@ def progress_bar():
     st.markdown(f"### **Budget Used**: ₱{(total_budget()-remaining_budget()):.2f}")
     st.markdown(f"### **Remaining Budget**: ₱{remaining_budget():.2f}")
 
+budget_allocation = get_categories()
+categories = budget_allocation.keys()
+allocation = budget_allocation.values()
+
 #THE ACTUAL PROGRAM ///////////////////////////////////////////////////////////////////////////////////////
 
 if not selected_month:
@@ -86,23 +92,33 @@ else:
 
     column1, column2 = st.columns([3.88,1])
 
+    with column2:
+        if st.button("+ Add Category", disabled=remaining_budget() <= 0,  help="No remaining budget available." if remaining_budget() <= 0 else None): # checks if u even have space in the budget to add a new category
+            add_category()
+        if st.button("- Remove Category"):
+            pass
+        st.multiselect("test", options=categories, key="selected_categories")
+        progress_bar()
+
     with column1:
         category, amount = st.columns(2)
-        budget_allocation = get_categories()
-        categories = budget_allocation.keys()
-        allocation = budget_allocation.values()
         st.divider()
 
         with category: #displays the categories
             st.markdown("## Category")
-            for category in categories:
-                st.markdown(category)
+            for category_ in categories:
+                if not st.session_state["selected_categories"]:
+                    st.markdown(category_)
+                else:
+                    if category_ in st.session_state["selected_categories"]:
+                        st.markdown(category_)
         with amount: #displays the amounts for each category
             st.markdown("## Amount Allocated")
-            for _allocation in allocation:
-                st.markdown(f"₱ {_allocation:.2f}")
+            if not st.session_state["selected_categories"]:
+                for _ in allocation:
+                    st.markdown(_)
+            else:
+                for category in st.session_state["selected_categories"]:
+                    st.markdown(f"₱{budget_allocation[category]}")
 
-    with column2:
-        if st.button("+ Add Category", disabled=remaining_budget() <= 0,  help="No remaining budget available." if remaining_budget() <= 0 else None): # checks if u even have space in the budget to add a new category
-            add_category()
-        progress_bar()
+
