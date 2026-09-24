@@ -84,15 +84,46 @@ def delete_category(category_):
     with yes:
         if st.button("Yes"):
             for entry in budget:
-                if category_ == entry["category"]:
-                    budget.remove(entry)
-                    save_budget_data(budget)
-                    st.toast(f"Successfully deleted {category_}")
-                    st.rerun()
-                else:
-                    continue
+                if entry["month"] == selected_month:
+                    if category_ == entry["category"]:
+                        budget.remove(entry)
+                        save_budget_data(budget)
+                        st.toast(f"Successfully deleted {category_}")
+                        st.rerun()
+                    else:
+                        continue
     with no:
         if st.button("No"):
+            st.rerun()
+
+@st.dialog("What would you like to edit?")
+def edit_category(category_):
+    remaining = remaining_budget()
+    new_name = st.text_input("Name", placeholder = category_)
+    new_allocation = st.number_input("Amount Allocated", min_value=0, max_value=remaining, step=100)
+    save, cancel = st.columns(2)
+    with save:
+        if st.button("Save"):
+            for entry in budget:
+                if entry["month"] == selected_month:
+                    if category_ == entry["category"]:
+                        if new_name.strip() == "":
+                            new_name = category_
+                        if new_allocation == 0:
+                            budget.remove(entry)
+                            save_budget_data(budget)
+                            st.toast(f"{category_} was deleted")
+                            st.rerun()
+                        else:
+                            entry["category"] = new_name
+                            entry["planned_amount"] = new_allocation
+                            save_budget_data(budget)
+                            st.toast(f"{category_} successfully modified")
+                            st.rerun()
+                    else:
+                        continue
+    with cancel:
+        if st.button("Cancel"):
             st.rerun()
 
 def row_display(category_, allocation_):
@@ -105,7 +136,7 @@ def row_display(category_, allocation_):
     with popover:
         with st.popover("⋮", type="tertiary", key=f"{category_}_popover", width=10):
             if st.button("Edit", key=f"{category_}_edit"):
-                pass
+                edit_category(category_)
             if st.button("Delete", key=f"{category_}_delete"):
                 delete_category(category_)
 
