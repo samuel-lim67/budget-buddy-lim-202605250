@@ -79,7 +79,7 @@ def progress_bar():
 
 @st.dialog("Are you sure you want to do this?")
 def delete_category(category_):
-    st.markdown("You won't be able to recover your data")
+    st.markdown("You won't be able to recover your data!")
     yes, no = st.columns(2)
     with yes:
         if st.button("Yes"):
