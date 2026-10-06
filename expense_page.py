@@ -20,3 +20,8 @@ def get_total():
 st.title(f"Total Expenses for {selected_month}: ₱{get_total():.2f}")
 
 st.divider()
+
+date, month, category, description, amount = st.columns(5)
+for entry in expense:
+    if entry["month"] == selected_month:
+        st.markdown(entry["amount"])

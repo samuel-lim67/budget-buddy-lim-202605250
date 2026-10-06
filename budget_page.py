@@ -118,7 +118,7 @@ def edit_category(category_):
                             entry["category"] = new_name
                             entry["planned_amount"] = new_allocation
                             save_budget_data(budget)
-                            st.toast(f"{category_} successfully modified")
+                            st.toast(f"{category_} successfully modified!")
                             st.rerun()
                     else:
                         continue
