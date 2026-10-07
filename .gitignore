@@ -1,1 +1,6 @@
-EEE111/
+__pycache__/
+*.pyc
+
+.idea/
+
+.venv/
