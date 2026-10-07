@@ -46,12 +46,27 @@ def save_expense(category, date, description,expense_amount):
     save_expense_data(expense)
     st.toast("Expense Successfully Logged!")
 
+def row_display(entry):
+    date, category, description, amount, delete = st.columns(5)
+    with date:
+        st.markdown(entry["date"])
+    with category:
+        st.markdown(entry["category"])
+    with description:
+        st.markdown(entry["description"])
+    with amount:
+        st.markdown(f"₱{entry["amount"]:.2f}")
+    with delete:
+        if st.button("x", key= f"{entry["description"]}_delete"):
+            pass
 
 budget_allocation = get_categories(budget, selected_month)
 categories = budget_allocation.keys()
 allocation = budget_allocation.values()
-#ACTUAL PROGRAM///////////////////////////////////////////////////////////////////
 
+#ACTUAL PROGRAM///////////////////////////////////////////////////////////////////
+for entry in expense:
+    print(entry)
 if not selected_month:
     st.markdown("# Select a budget timeframe to get started!")
 else:
@@ -64,3 +79,27 @@ else:
         if st.button("+ Add Expense"): # checks if u even have space in the budget to add a new category
             add_expense()
         st.multiselect("View Specific Category", options=categories, key="selected_categories")
+    with column1:
+        date, category, description, amount, delete = st.columns(5)
+        with date:
+            st.markdown("### Date")
+        with category:
+            st.markdown("### Category")
+        with description:
+            st.markdown("### Description")
+        with amount:
+            st.markdown("### Amount")
+        with delete:
+            st.space(size="xsmall")
+        for entry in expense:
+            if entry["month"] == selected_month:
+                if not st.session_state["selected_categories"]: #automatically displays everything if nothings selected
+                    row_display(entry)
+
+                elif entry["category"] not in st.session_state["selected_categories"]: #makes sure that there isnt just a bunch of spaces when u select a category that starts in the middle of the list
+                    continue
+                else:
+                    row_display(entry)
+            else:
+                continue
+    st.divider()
