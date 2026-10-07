@@ -6,7 +6,7 @@ budget = load_budget_data()
 
 selected_month = st.session_state.get("selected_budget", "") #instead aof just checking the dictionary, it sazxys to getth evalue, and if it doesnt exist the default avlue is an empty list
 
-def get_categories(): #creates a dictionary, and then checks for each month selected, if a category is already in the dictionary, it just adds money to that category, but if not it adds it to the dictioanry
+def get_categories(budget, selected_month): #creates a dictionary, and then checks for each month selected, if a category is already in the dictionary, it just adds money to that category, but if not it adds it to the dictioanry
     budget_allocation = {}
     for entry in budget:
         if entry["month"] in selected_month:
@@ -57,7 +57,7 @@ def save_category(month, name, category_amount):
 def add_category():
     remaining = remaining_budget()
     name = st.text_input("What would you like to name this category?")
-    category_amount = st.number_input("How much would you like to allocate to this category?", min_value=0, max_value=remaining, step=100)
+    category_amount = st.number_input("How much would you like to allocate to this category?", min_value=0.0, max_value=remaining, step=100.0)
 
     if st.button("Create"):
         if not name.strip():
@@ -140,7 +140,7 @@ def row_display(category_, allocation_):
             if st.button("Delete", key=f"{category_}_delete"):
                 delete_category(category_)
 
-budget_allocation = get_categories()
+budget_allocation = get_categories(budget, selected_month)
 categories = budget_allocation.keys()
 allocation = budget_allocation.values()
 

@@ -1,5 +1,8 @@
 import streamlit as st
-from data_loader import load_budget_data, load_expense_data, save_budget_data
+from data_loader import load_budget_data, load_expense_data, save_expense_data
+from budget_page import get_categories
+import calendar
+from datetime import date
 
 expense = load_expense_data()
 budget = load_budget_data()
@@ -17,10 +20,10 @@ def get_total():
 
 @st.dialog("Add New Expense")
 def add_expense():
-    category = st.multiselect("Select Category", options=categories, max_selections=1)
+    category = st.selectbox("Select Category", options=categories)
     date = st.date_input("Date of Expense")
     description = st.text_input("Enter expense description")
-    expense_amount = st.number_input("How much did you spend", min_value=0, step=100)
+    expense_amount = st.number_input("How much did you spend", min_value=0.0, step=100.0)
     if st.button("Create"):
         if not description:
             st.error("Please enter expense description!")
@@ -36,24 +39,15 @@ def save_expense(category, date, description,expense_amount):
         "month": selected_month,
         "category": category,
         "description": description,
-        "expense_amount": expense_amount
+        "amount": round(expense_amount, 1),
     }
 
-    budget.append(new_expense)
-    save_budget_data(budget)
-    st.toast("Successfully added a new category!")
+    expense.append(new_expense)
+    save_expense_data(expense)
+    st.toast("Expense Successfully Logged!")
 
-def get_categories(): #creates a dictionary, and then checks for each month selected, if a category is already in the dictionary, it just adds money to that category, but if not it adds it to the dictioanry
-    budget_allocation = {}
-    for entry in budget:
-        if entry["month"] in selected_month:
-            if entry["category"] in budget_allocation:
-                budget_allocation[entry["category"]] += entry["planned_amount"]
-            else:
-                budget_allocation[entry["category"]] = entry["planned_amount"]
-    return budget_allocation
 
-budget_allocation = get_categories()
+budget_allocation = get_categories(budget, selected_month)
 categories = budget_allocation.keys()
 allocation = budget_allocation.values()
 #ACTUAL PROGRAM///////////////////////////////////////////////////////////////////
