@@ -3,6 +3,7 @@ from data_loader import load_budget_data, load_expense_data, save_expense_data
 from budget_page import get_categories
 import calendar
 from datetime import date
+import pandas as pd
 
 expense = load_expense_data()
 budget = load_budget_data()
@@ -80,26 +81,24 @@ else:
             add_expense()
         st.multiselect("View Specific Category", options=categories, key="selected_categories")
     with column1:
-        date, category, description, amount, delete = st.columns(5)
-        with date:
-            st.markdown("### Date")
-        with category:
-            st.markdown("### Category")
-        with description:
-            st.markdown("### Description")
-        with amount:
-            st.markdown("### Amount")
-        with delete:
-            st.space(size="xsmall")
-        for entry in expense:
-            if entry["month"] == selected_month:
-                if not st.session_state["selected_categories"]: #automatically displays everything if nothings selected
-                    row_display(entry)
+        st.markdown(f"# List of expenses for {selected_month}")
+        df = pd.DataFrame(expense)
+        df = df[df["month"] == selected_month]
+        df["Delete"] = False
+        df["date"] = pd.to_datetime(df["date"]).dt.date
 
-                elif entry["category"] not in st.session_state["selected_categories"]: #makes sure that there isnt just a bunch of spaces when u select a category that starts in the middle of the list
-                    continue
-                else:
-                    row_display(entry)
-            else:
-                continue
-    st.divider()
+        st.data_editor(df, use_container_width=True, hide_index=True, column_config=
+        {
+            "date": st.column_config.DateColumn(
+            "Date",
+            format="YYYY-MM-DD"
+        ),
+            "month": "Month",
+            "category": "Category",
+            "description": "Description",
+            "amount": st.column_config.NumberColumn(
+                "Amount",
+                format="₱%.2f"
+            )
+        }
+                     )
