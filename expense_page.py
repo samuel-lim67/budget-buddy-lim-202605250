@@ -81,6 +81,7 @@ else:
 
     column1, column2 = st.columns([3.88, 1])
     with column2:
+        st.space("large")
         if st.button("+ Add Expense"): # checks if u even have space in the budget to add a new category
             add_expense()
         st.multiselect("View Specific Category", options=categories, key="selected_categories")
@@ -92,7 +93,7 @@ else:
         df["date"] = pd.to_datetime(df["date"]).dt.date
 
         if not st.session_state["selected_categories"]:
-            st.dataframe(df, use_container_width=True, hide_index=True, column_config=
+            st.dataframe(df, use_container_width=True, hide_index=True, height="content", column_config=
             {
                 "date": st.column_config.DateColumn(
                     "Date",
@@ -109,7 +110,7 @@ else:
                                          )
         else:
             df = df[df["category"].isin(st.session_state["selected_categories"])]
-            st.dataframe(df, use_container_width=True, hide_index=True, column_config=
+            st.dataframe(df, use_container_width=True, hide_index=True,  height="content", column_config=
             {
                 "date": st.column_config.DateColumn(
                     "Date",
