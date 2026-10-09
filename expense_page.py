@@ -2,7 +2,7 @@ import streamlit as st
 from data_loader import load_budget_data, load_expense_data, save_expense_data
 from budget_page import get_categories
 import calendar
-from datetime import date
+from datetime import date, datetime
 import pandas as pd
 
 expense = load_expense_data()
@@ -22,7 +22,7 @@ def get_total():
 @st.dialog("Add New Expense")
 def add_expense():
     category = st.selectbox("Select Category", options=categories)
-    date = st.date_input("Date of Expense")
+    date = st.date_input("Date of Expense", value=first_day, min_value=first_day, max_value=last_day)
     description = st.text_input("Enter expense description")
     expense_amount = st.number_input("How much did you spend", min_value=0.0, step=100.0)
     if st.button("Create"):
@@ -61,6 +61,10 @@ def row_display(entry):
         if st.button("x", key= f"{entry["description"]}_delete"):
             pass
 
+month_date = datetime.strptime(selected_month, "%B %Y") #gets the month+year given a selected budget, %B and %Y are format instructions on how itll interpret the entered string
+first_day = date(month_date.year, month_date.month, 1)
+last_day = date(month_date.year, month_date.month, calendar.monthrange(month_date.year, month_date.month)[1])
+
 budget_allocation = get_categories(budget, selected_month)
 categories = budget_allocation.keys()
 allocation = budget_allocation.values()
@@ -86,8 +90,6 @@ else:
         df = df[df["month"] == selected_month]
 
         df["date"] = pd.to_datetime(df["date"]).dt.date
-
-
 
         if not st.session_state["selected_categories"]:
             st.dataframe(df, use_container_width=True, hide_index=True, column_config=

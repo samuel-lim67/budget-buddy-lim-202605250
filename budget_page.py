@@ -57,7 +57,7 @@ def save_category(month, name, category_amount):
 def add_category():
     remaining = remaining_budget()
     name = st.text_input("What would you like to name this category?")
-    category_amount = st.number_input("How much would you like to allocate to this category?", min_value=0.0, max_value=remaining, step=100.0)
+    category_amount = st.number_input("How much would you like to allocate to this category?", min_value=0, max_value=remaining, step=100)
 
     if st.button("Create"):
         if not name.strip():
