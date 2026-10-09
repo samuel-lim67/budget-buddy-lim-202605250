@@ -84,21 +84,41 @@ else:
         st.markdown(f"# List of expenses for {selected_month}")
         df = pd.DataFrame(expense)
         df = df[df["month"] == selected_month]
-        df["Delete"] = False
+
         df["date"] = pd.to_datetime(df["date"]).dt.date
 
-        st.data_editor(df, use_container_width=True, hide_index=True, column_config=
-        {
-            "date": st.column_config.DateColumn(
-            "Date",
-            format="YYYY-MM-DD"
-        ),
-            "month": "Month",
-            "category": "Category",
-            "description": "Description",
-            "amount": st.column_config.NumberColumn(
-                "Amount",
-                format="₱%.2f"
-            )
-        }
-                     )
+
+
+        if not st.session_state["selected_categories"]:
+            st.dataframe(df, use_container_width=True, hide_index=True, column_config=
+            {
+                "date": st.column_config.DateColumn(
+                    "Date",
+                    format="YYYY-MM-DD"
+                ),
+                "month": "Month",
+                "category": "Category",
+                "description": "Description",
+                "amount": st.column_config.NumberColumn(
+                    "Amount",
+                    format="₱%.2f"
+                )
+            }
+                                         )
+        else:
+            df = df[df["category"].isin(st.session_state["selected_categories"])]
+            st.dataframe(df, use_container_width=True, hide_index=True, column_config=
+            {
+                "date": st.column_config.DateColumn(
+                    "Date",
+                    format="YYYY-MM-DD"
+                ),
+                "month": "Month",
+                "category": "Category",
+                "description": "Description",
+                "amount": st.column_config.NumberColumn(
+                    "Amount",
+                    format="₱%.2f"
+                )
+            }
+                         )
