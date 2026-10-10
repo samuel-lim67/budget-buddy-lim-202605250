@@ -70,8 +70,6 @@ categories = budget_allocation.keys()
 allocation = budget_allocation.values()
 
 #ACTUAL PROGRAM///////////////////////////////////////////////////////////////////
-for entry in expense:
-    print(entry)
 if not selected_month:
     st.markdown("# Select a budget timeframe to get started!")
 else:
@@ -93,7 +91,7 @@ else:
         df["date"] = pd.to_datetime(df["date"]).dt.date
 
         if not st.session_state["selected_categories"]:
-            st.dataframe(df, use_container_width=True, hide_index=True, height="content", column_config=
+            st.dataframe(df, width="stretch", hide_index=True, height="content", column_config=
             {
                 "date": st.column_config.DateColumn(
                     "Date",
