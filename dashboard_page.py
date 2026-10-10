@@ -1,7 +1,20 @@
 import streamlit as st
+from data_loader import load_budget_data, load_expense_data, save_budget_data
+
+expense = load_expense_data()
+budget = load_budget_data()
 
 st.title("Budget Buddy v1")
 st.header("_By TheGalacticProg_")
+
+def get_category_expense(category):
+    total = 0
+    for entry in expense:
+        if entry["category"] == category:
+            total += entry["amount"]
+        else:
+            continue
+    return total
 
 st.divider()
 
@@ -15,3 +28,5 @@ with col2:
 
 with col3:
     st.metric("Remaining", "temp")
+
+st.markdown(get_category_expense("Food"))

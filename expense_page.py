@@ -3,7 +3,6 @@ from data_loader import load_budget_data, load_expense_data, save_expense_data
 from budget_page import get_categories
 import calendar
 from datetime import date, datetime
-import pandas as pd
 
 expense = load_expense_data()
 budget = load_budget_data()
@@ -85,13 +84,9 @@ else:
         st.multiselect("View Specific Category", options=categories, key="selected_categories")
     with column1:
         st.markdown(f"# List of expenses for {selected_month}")
-        df = pd.DataFrame(expense)
-        df = df[df["month"] == selected_month]
-
-        df["date"] = pd.to_datetime(df["date"]).dt.date
-
+        filtered_expense = [expenses for expenses in expense if expenses["month"] == selected_month]
         if not st.session_state["selected_categories"]:
-            st.dataframe(df, width="stretch", hide_index=True, height="content", column_config=
+            st.dataframe(filtered_expense, width="stretch", hide_index=True, height="content", column_config=
             {
                 "date": st.column_config.DateColumn(
                     "Date",
@@ -107,8 +102,8 @@ else:
             }
                                          )
         else:
-            df = df[df["category"].isin(st.session_state["selected_categories"])]
-            st.dataframe(df, use_container_width=True, hide_index=True,  height="content", column_config=
+            filtered_expense = [expenses for expenses in expense if expenses["month"] == selected_month and expenses["category"] in st.session_state["selected_categories"]]
+            st.dataframe(filtered_expense, use_container_width=True, hide_index=True,  height="content", column_config=
             {
                 "date": st.column_config.DateColumn(
                     "Date",
