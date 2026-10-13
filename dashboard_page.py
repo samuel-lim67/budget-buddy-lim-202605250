@@ -28,7 +28,7 @@ def category_display():
                 if entry["category"] == category:
                     category_ = {
                         "Category": category,
-                        "Planned Amount": f"₱{entry["planned_amount"]:.2f}",
+                        "Planned Amount": entry["planned_amount"],
                         "Expenses": 0,
                         "Remaining": 0
                     }
@@ -48,26 +48,77 @@ def category_display():
         row["Remaining"] = remaining_calculator(row["Planned Amount"], row["Expenses"])
     return table_row
 
+def total_budget(budget, selected_month):
+    month_total = {} #dictionary that assigns a total budget for each month
+    for entry in budget:
+        if entry["month"] in selected_month:
+            if entry["month"] in month_total:
+                continue
+            else:
+                month_total[entry["month"]] = entry["income"]
+    return month_total[selected_month]
+
 def remaining_calculator(planned_amount, expenses):
-    remaining = float(planned_amount[1:]) - expenses
+    remaining = float(planned_amount) - expenses
     return remaining
+
+def row_display(category, allocation, expenses, remaining):
+    category_, allocation_, expenses_, remaining_ = st.columns(4)
+    with category_:  # displays the categories
+        st.markdown(category)
+    with allocation_:  # displays the amounts for each category
+        st.markdown(allocation)
+    with expenses_:
+        st.markdown(expenses)
+    with remaining_:
+        if remaining < 0:
+            st.error(f"Over budget by ₱{abs(remaining):,.2f}")
+        else:
+            st.success(f"₱{remaining:,.2f} remaining")
+
+def get_total_expense():
+    total = 0
+    for entry in expense:
+        if entry["month"] == selected_month:
+            total += entry["amount"]
+        else:
+            continue
+    return total
 
 budget_allocation = get_categories(budget, selected_month)
 categories = budget_allocation.keys()
 allocation = budget_allocation.values()
 
+month_budget = total_budget(budget, selected_month)
+total_expenses = get_total_expense()
+remaining = month_budget - total_expenses
 st.divider()
+
+#ACTUAL CODE///////////////////////////////////////////////////////////////////
 
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    st.metric("Total Budget", "temp")
+    st.metric("Total Budget", value=f"₱{month_budget:.2f}")
 
 with col2:
-    st.metric("Total Spent", "temp")
+    st.metric("Total Spent", value=f"₱{total_expenses:.2f}")
 
 with col3:
-    st.metric("Remaining", "temp")
+    st.metric("Remaining", value=f"₱{remaining:.2f}")
+
+st.divider()
 
 budget_breakdown = category_display()
-st.dataframe(budget_breakdown)
+#st.dataframe(budget_breakdown)
+category_, allocation_, expenses_, remaining_ = st.columns(4)
+with category_:
+    st.markdown("### Category")
+with allocation_:
+    st.markdown("### Allocation")
+with expenses_:
+    st.markdown("### Expenses")
+with remaining_:
+    st.markdown("### Remaining")
+for row in budget_breakdown:
+    row_display(row["Category"], row["Planned Amount"], row["Expenses"], row["Remaining"])

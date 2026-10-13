@@ -16,7 +16,7 @@ def get_categories(budget, selected_month): #creates a dictionary, and then chec
                 budget_allocation[entry["category"]] = entry["planned_amount"]
     return budget_allocation
 
-def total_budget():
+def total_budget(budget, selected_month):
     month_total = {} #dictionary that assigns a total budget for each month
     for entry in budget:
         if entry["month"] in selected_month:
@@ -28,7 +28,7 @@ def total_budget():
 
 def remaining_budget():
     combined_amount = 0
-    total = total_budget()
+    total = total_budget(budget, selected_month)
     for entry in budget: #gets the total amount of the budget used by the categories
         if entry["month"] == selected_month:
             combined_amount += entry["planned_amount"]
@@ -71,10 +71,10 @@ def add_category():
             st.rerun()
 
 def progress_bar():
-    percentage_used = (total_budget() - remaining_budget()) / total_budget() #gets the percentage of budget reminaing to place into st.progress
+    percentage_used = (total_budget(budget, selected_month) - remaining_budget()) / total_budget(budget, selected_month) #gets the percentage of budget reminaing to place into st.progress
     progressbar = st.progress(0)
     progressbar.progress(percentage_used)
-    st.markdown(f"### **Budget Used**: ₱{(total_budget()-remaining_budget()):.2f}")
+    st.markdown(f"### **Budget Used**: ₱{(total_budget(budget, selected_month)-remaining_budget()):.2f}")
     st.markdown(f"### **Remaining Budget**: ₱{remaining_budget():.2f}")
 
 @st.dialog("Are you sure you want to do this?")
@@ -150,7 +150,7 @@ if not selected_month:
     st.markdown("# Select a budget timeframe to get started!")
 
 else:
-    st.title(f"Total Budget for {selected_month}: ₱{total_budget():.2f}")
+    st.title(f"Total Budget for {selected_month}: ₱{total_budget(budget, selected_month):.2f}")
     st.divider()
 
     column1, column2 = st.columns([3.88,1])
