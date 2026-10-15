@@ -1,6 +1,6 @@
 import streamlit as st
 from data_loader import load_budget_data, load_expense_data, save_budget_data
-from budget_page import get_categories, remaining_budget
+from budget_page import get_categories
 import matplotlib.pyplot as plt
 
 expense = load_expense_data()
@@ -11,6 +11,7 @@ selected_month = st.session_state.get("selected_budget", "")
 st.title("Budget Buddy v1")
 st.header("_By TheGalacticProg_")
 
+bg_color = st.get_option("theme.backgroundColor") #gets the background color
 def get_category_expense(category):
     total = 0
     for entry in expense:
@@ -86,6 +87,14 @@ def get_total_expense():
             continue
     return total
 
+def remaining_budget():
+    combined_amount = 0
+    total = total_budget(budget, selected_month)
+    for entry in budget: #gets the total amount of the budget used by the categories
+        if entry["month"] == selected_month:
+            combined_amount += entry["planned_amount"]
+    return int(total-combined_amount)
+
 budget_allocation = get_categories(budget, selected_month)
 categories = list(budget_allocation.keys())
 allocation = list(budget_allocation.values())
@@ -94,6 +103,7 @@ month_budget = total_budget(budget, selected_month)
 total_expenses = get_total_expense()
 remaining_ = month_budget - total_expenses
 st.divider()
+
 leftover_budget = remaining_budget()
 #ACTUAL CODE///////////////////////////////////////////////////////////////////
 
@@ -111,7 +121,7 @@ with col3:
 st.divider()
 
 budget_breakdown = category_display()
-#st.dataframe(budget_breakdown)
+
 category_, allocation_, expenses_, remaining_ = st.columns(4)
 with category_:
     st.markdown("### Category")
@@ -127,12 +137,19 @@ for row in budget_breakdown:
 if leftover_budget  > 0:
     categories.append("Unallocated")
     allocation.append(leftover_budget)
+st.divider()
+pie, bar = st.columns(2)
 
+with pie:
 
-figure, piechart = plt.subplots()
+    figure, piechart = plt.subplots()
 
-piechart.pie(allocation, labels = categories)
+    piechart.pie(allocation,  autopct="%1.1f%%")
+    piechart.legend(categories, title="Categories",loc="center left" , bbox_to_anchor=(1, 0.5),)
 
-piechart.set_title("Budget Allocation")
+    piechart.set_title("Budget Allocation")
 
-st.pyplot(figure)
+    st.pyplot(figure)
+
+with bar:
+    st.bar_chart(budget_breakdown, x="Category", y=["Planned Amount", "Expenses"], stack=False, color=["#90EE90", "#FF8A8A"])
