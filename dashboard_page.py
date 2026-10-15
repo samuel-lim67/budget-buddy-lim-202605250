@@ -9,7 +9,7 @@ budget = load_budget_data()
 selected_month = st.session_state.get("selected_budget", "")
 
 st.title("Budget Buddy v1")
-st.header("_By TheGalacticProg_")
+st.header("_By Samuel Lim_")
 
 bg_color = st.get_option("theme.backgroundColor") #gets the background color
 def get_category_expense(category):

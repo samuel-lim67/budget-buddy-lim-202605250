@@ -51,6 +51,38 @@ def delete_expense(expense):
         if st.button("Cancel"):
             st.rerun()
 
+@st.dialog("Edit Expense")
+def edit_expense(expense):
+    options = []
+    for entry in expense:
+        options.append(entry["description"])
+    edit_item = st.selectbox("What would you like to edit?", options=options)
+    category = st.selectbox("Select Category", options=categories)
+    date = st.date_input("Date of Expense", value=first_day, min_value=first_day, max_value=last_day)
+    description = st.text_input("Enter expense description")
+    expense_amount = st.number_input("How much did you spend", min_value=0.0, step=100.0)
+    yes, no = st.columns(2)
+    with yes:
+        if st.button("Confirm"):
+            if not description:
+                st.error("Please enter a valid description")
+            elif expense_amount == 0:
+                st.error("Please enter a valid amount")
+            else:
+                for entry in expense:
+                    if entry["description"] == edit_item:
+                        entry["description"] = description
+                        entry["category"] = category
+                        entry["date"] = date
+                        entry["amount"] = expense_amount
+                        break
+                save_expense_data(expense)
+                st.toast(f"'{edit_item}' Successfully Editted!")
+                st.rerun()
+    with no:
+        if st.button("Cancel"):
+            st.rerun()
+
 
 def save_expense(category, date, description,expense_amount):
     new_expense = {
@@ -102,6 +134,8 @@ else:
             add_expense()
         if st.button("- Delete Expense"):
             delete_expense(expense)
+        if st.button("Edit Expense"):
+            edit_expense(expense)
         st.multiselect("View Specific Category", options=categories, key="selected_categories")
     with column1:
         st.markdown(f"# List of expenses for {selected_month}")
