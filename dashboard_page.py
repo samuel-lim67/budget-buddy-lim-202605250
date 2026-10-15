@@ -1,6 +1,7 @@
 import streamlit as st
 from data_loader import load_budget_data, load_expense_data, save_budget_data
-from budget_page import get_categories
+from budget_page import get_categories, remaining_budget
+import matplotlib.pyplot as plt
 
 expense = load_expense_data()
 budget = load_budget_data()
@@ -86,14 +87,14 @@ def get_total_expense():
     return total
 
 budget_allocation = get_categories(budget, selected_month)
-categories = budget_allocation.keys()
-allocation = budget_allocation.values()
+categories = list(budget_allocation.keys())
+allocation = list(budget_allocation.values())
 
 month_budget = total_budget(budget, selected_month)
 total_expenses = get_total_expense()
-remaining = month_budget - total_expenses
+remaining_ = month_budget - total_expenses
 st.divider()
-
+leftover_budget = remaining_budget()
 #ACTUAL CODE///////////////////////////////////////////////////////////////////
 
 col1, col2, col3 = st.columns(3)
@@ -105,7 +106,7 @@ with col2:
     st.metric("Total Spent", value=f"₱{total_expenses:.2f}")
 
 with col3:
-    st.metric("Remaining", value=f"₱{remaining:.2f}")
+    st.metric("Remaining", value=f"₱{remaining_:.2f}")
 
 st.divider()
 
@@ -122,3 +123,16 @@ with remaining_:
     st.markdown("### Remaining")
 for row in budget_breakdown:
     row_display(row["Category"], row["Planned Amount"], row["Expenses"], row["Remaining"])
+
+if leftover_budget  > 0:
+    categories.append("Unallocated")
+    allocation.append(leftover_budget)
+
+
+figure, piechart = plt.subplots()
+
+piechart.pie(allocation, labels = categories)
+
+piechart.set_title("Budget Allocation")
+
+st.pyplot(figure)
