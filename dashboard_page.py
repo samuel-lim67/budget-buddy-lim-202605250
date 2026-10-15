@@ -67,14 +67,14 @@ def row_display(category, allocation, expenses, remaining):
     with category_:  # displays the categories
         st.markdown(category)
     with allocation_:  # displays the amounts for each category
-        st.markdown(allocation)
+        st.markdown(f"₱{allocation:.2f}")
     with expenses_:
-        st.markdown(expenses)
+        st.markdown(f"₱{expenses:.2f}")
     with remaining_:
         if remaining < 0:
-            st.error(f"Over budget by ₱{abs(remaining):,.2f}")
+            st.error(f"Over budget by ₱{abs(remaining):.2f}")
         else:
-            st.success(f"₱{remaining:,.2f} remaining")
+            st.success(f"₱{remaining:.2f} remaining")
 
 def get_total_expense():
     total = 0

@@ -42,7 +42,7 @@ for entry in budget:
 
 with st.sidebar:
     st.radio("Please select a budget", options=months, key="selected_budget")
-    if st.button("Add new budget"):
+    if st.button("+ Add new budget"):
         create_new_budget()
 
     #st.sidebar.selectbox("Please select a budget option", options=months, key="selected_month", accept_new_options=True, persist_state="session")

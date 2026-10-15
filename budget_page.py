@@ -97,10 +97,14 @@ def delete_category(category_):
             st.rerun()
 
 @st.dialog("What would you like to edit?")
-def edit_category(category_):
+def edit_category(category_, allocation_):
     remaining = remaining_budget()
     new_name = st.text_input("Name", placeholder = category_)
-    new_allocation = st.number_input("Amount Allocated", min_value=0, max_value=remaining, step=100)
+    if allocation_ >= remaining:
+        max = allocation_
+    elif remaining > allocation_:
+        max = remaining
+    new_allocation = st.number_input("Amount Allocated", min_value=0.0, max_value=float(max), step=100.0, value=float(allocation_))
     save, cancel = st.columns(2)
     with save:
         if st.button("Save"):
@@ -136,7 +140,7 @@ def row_display(category_, allocation_):
     with popover:
         with st.popover("⋮", type="tertiary", key=f"{category_}_popover", width=10):
             if st.button("Edit", key=f"{category_}_edit"):
-                edit_category(category_)
+                edit_category(category_, allocation_)
             if st.button("Delete", key=f"{category_}_delete"):
                 delete_category(category_)
 
@@ -144,13 +148,26 @@ budget_allocation = get_categories(budget, selected_month)
 categories = budget_allocation.keys()
 allocation = budget_allocation.values()
 
+def get_source():
+    for entry in budget:
+        if entry["month"] == selected_month:
+            return entry["income_source"]
+        else:
+            continue
+    return None
+
 #THE ACTUAL PROGRAM ///////////////////////////////////////////////////////////////////////////////////////
 
 if not selected_month:
     st.markdown("# Select a budget timeframe to get started!")
 
 else:
-    st.title(f"Total Budget for {selected_month}: ₱{total_budget(budget, selected_month):.2f}")
+    st.markdown(f"## Total Budget for {selected_month}")
+    amount, source = st.columns(2)
+    with amount:
+        st.markdown(f"# Expected Amount: ₱{total_budget(budget, selected_month):.2f}")
+    with source:
+        st.markdown(f"# Source: {get_source()}")
     st.divider()
 
     column1, column2 = st.columns([3.88,1])
