@@ -11,6 +11,24 @@ selected_month = st.session_state.get("selected_budget", "")
 st.set_page_config(layout="wide")
 months = []
 
+def total_budget(budget, selected_month):
+    month_total = {} #dictionary that assigns a total budget for each month
+    for entry in budget:
+        if entry["month"] in selected_month:
+            if entry["month"] in month_total:
+                continue
+            else:
+                month_total[entry["month"]] = entry["income"]
+    return month_total[selected_month]
+
+def remaining_budget():
+    combined_amount = 0
+    total = total_budget(budget, selected_month)
+    for entry in budget: #gets the total amount of the budget used by the categories
+        if entry["month"] == selected_month:
+            combined_amount += entry["planned_amount"]
+    return int(total-combined_amount)
+
 @st.dialog("Create New Budget")
 def create_new_budget():
     col1, col2 = st.columns(2)
@@ -110,6 +128,8 @@ def edit_budget(budget, expense):
                 if entry["month"] == new_budget_month or new_budget_month == edit_month:
                     st.error(f"A budget for {new_budget_month} already exists!")
                     break
+            if (total_budget(budget, selected_month)-remaining_budget()) > amount:
+                st.error("This will be less than the currently allocated budget for that month!")
             else:
                 save_budget_changes(edit_month, new_budget_month, amount)
     with no:

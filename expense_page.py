@@ -33,6 +33,25 @@ def add_expense():
             save_expense(category, date, description,expense_amount)
             st.rerun()
 
+@st.dialog("Delete Expense")
+def delete_expense(expense):
+    options = []
+    for entry in expense:
+        options.append(entry["description"])
+    delete_item = st.selectbox("What would you like to delete?", options = options)
+    st.markdown("(This cannot be undone)")
+    yes, no = st.columns(2)
+    with yes:
+        if st.button("Confirm"):
+            expense = [entry for entry in expense if entry["description"] != delete_item]
+            save_expense_data(expense)
+            st.toast(f"'{delete_item}' Successfully Removed")
+            st.rerun()
+    with no:
+        if st.button("Cancel"):
+            st.rerun()
+
+
 def save_expense(category, date, description,expense_amount):
     new_expense = {
         "date": date,
@@ -81,6 +100,8 @@ else:
         st.space("large")
         if st.button("+ Add Expense"): # checks if u even have space in the budget to add a new category
             add_expense()
+        if st.button("- Delete Expense"):
+            delete_expense(expense)
         st.multiselect("View Specific Category", options=categories, key="selected_categories")
     with column1:
         st.markdown(f"# List of expenses for {selected_month}")
