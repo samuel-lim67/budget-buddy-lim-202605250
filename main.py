@@ -1,5 +1,5 @@
 import streamlit as st
-from data_loader import load_budget_data, load_expense_data, save_budget_data
+from data_loader import load_budget_data, load_expense_data, save_budget_data, save_expense_data
 from datetime import datetime
 
 expense = load_expense_data()
@@ -40,10 +40,37 @@ for entry in budget:
     if entry["month"] not in months:
         months.append(entry["month"])
 
+@st.dialog("Delete a Budget")
+def delete_budget(budget, expense):
+    options = []
+    for entry in budget:
+        if entry["month"] in options:
+            continue
+        else:
+            options.append(entry["month"])
+    delete_month = st.selectbox("Select a Budget", options = options)
+    st.markdown("Are you sure you want to delete this budget? ")
+    st.markdown("(This cannot be undone)")
+    yes, no = st.columns(2)
+    with yes:
+        if st.button("Yes"):
+            budget = [entry for entry in budget if entry["month"] != delete_month]
+            save_budget_data(budget)
+            expense = [entry for entry in expense if entry["month"] != delete_month]
+            save_expense_data(expense)
+            st.success(f"{delete_month} budget deleted!")
+            st.rerun()
+
+
+    with no:
+        if st.button("No"):
+            pass
 with st.sidebar:
     st.radio("Please select a budget", options=months, key="selected_budget")
     if st.button("+ Add new budget"):
         create_new_budget()
+    if st.button("-️ Delete Budget"):
+        delete_budget(budget, expense)
 
     #st.sidebar.selectbox("Please select a budget option", options=months, key="selected_month", accept_new_options=True, persist_state="session")
 
