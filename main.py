@@ -1,9 +1,12 @@
 import streamlit as st
+from discord.ui.select import selected_values
+
 from data_loader import load_budget_data, load_expense_data, save_budget_data, save_expense_data
 from datetime import datetime
 
 expense = load_expense_data()
 budget = load_budget_data()
+selected_month = st.session_state.get("selected_budget", "")
 
 st.set_page_config(layout="wide")
 months = []
@@ -61,16 +64,66 @@ def delete_budget(budget, expense):
             st.success(f"{delete_month} budget deleted!")
             st.rerun()
 
-
     with no:
         if st.button("No"):
-            pass
+            st.rerun()
+
+def save_budget_changes(edit_month, new_budget_month, amount):
+    for entry in budget:
+        if entry["month"] == edit_month:
+            entry["month"] = f"{new_budget_month}"
+            entry["income"] = amount
+
+        else:
+            continue
+    save_budget_data(budget)
+    st.toast("Successfully Editted Budget!")
+    st.rerun()
+
+@st.dialog("Delete a Budget")
+def edit_budget(budget, expense):
+    options = []
+    for entry in budget:
+        if entry["month"] in options:
+            continue
+        else:
+            options.append(entry["month"])
+    edit_month = st.selectbox("Select a Budget", options = options)
+    for entry in budget:
+        if entry["month"] == edit_month:
+            budget_amount = entry["income"]
+        else:
+            continue
+    st.markdown("What would you like to edit?")
+    col1, col2 = st.columns(2)
+    with col1:
+        month = st.selectbox("Month",options=["January", "February", "March", "April", "May", "June", "July", "August","September", "October", "November", "December"])
+    with col2:
+        year = st.selectbox("Year", options=range(datetime.now().year, 2100))
+    amount = st.number_input("Income", min_value=0.0, step=100.0, value=float(budget_amount))
+    yes, no = st.columns(2)
+    new_budget_month = f"{month} {year}"
+
+    with yes:
+        if st.button("Confirm"):
+            for entry in budget:
+                if entry["month"] == new_budget_month or new_budget_month == edit_month:
+                    st.error(f"A budget for {new_budget_month} already exists!")
+                    break
+            else:
+                save_budget_changes(edit_month, new_budget_month, amount)
+    with no:
+        if st.button("Cancel"):
+            st.rerun()
+
 with st.sidebar:
     st.radio("Please select a budget", options=months, key="selected_budget")
     if st.button("+ Add new budget"):
         create_new_budget()
     if st.button("-️ Delete Budget"):
         delete_budget(budget, expense)
+    if st.button("Edit Budget"):
+        edit_budget(budget, expense)
 
     #st.sidebar.selectbox("Please select a budget option", options=months, key="selected_month", accept_new_options=True, persist_state="session")
 
