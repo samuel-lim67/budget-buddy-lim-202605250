@@ -98,7 +98,7 @@ def save_budget_changes(edit_month, new_budget_month, amount):
     st.toast("Successfully Editted Budget!")
     st.rerun()
 
-@st.dialog("Delete a Budget")
+@st.dialog("Edit a Budget")
 def edit_budget(budget, expense):
     options = []
     for entry in budget:
