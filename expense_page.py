@@ -36,14 +36,16 @@ def add_expense():
 @st.dialog("Delete Expense")
 def delete_expense(expense):
     options = []
-    for entry in expense:
-        options.append(entry["description"])
+
+    for i, entry in enumerate(expense):
+        options.append(f'{i}: {entry["description"]}')
     delete_item = st.selectbox("What would you like to delete?", options = options)
     st.markdown("(This cannot be undone)")
     yes, no = st.columns(2)
     with yes:
         if st.button("Confirm"):
-            expense = [entry for entry in expense if entry["description"] != delete_item]
+            index = int(delete_item.split(":")[0])
+            expense = [entry for i, entry in enumerate(expense) if i != index]
             save_expense_data(expense)
             st.toast(f"'{delete_item}' Successfully Removed")
             st.rerun()
@@ -54,8 +56,9 @@ def delete_expense(expense):
 @st.dialog("Edit Expense")
 def edit_expense(expense):
     options = []
-    for entry in expense:
-        options.append(entry["description"])
+
+    for i, entry in enumerate(expense):
+        options.append(f'{i}: {entry["description"]}')
     edit_item = st.selectbox("What would you like to edit?", options=options)
     category = st.selectbox("Select Category", options=categories)
     date = st.date_input("Date of Expense", value=first_day, min_value=first_day, max_value=last_day)
@@ -69,13 +72,13 @@ def edit_expense(expense):
             elif expense_amount == 0:
                 st.error("Please enter a valid amount")
             else:
-                for entry in expense:
-                    if entry["description"] == edit_item:
-                        entry["description"] = description
-                        entry["category"] = category
-                        entry["date"] = date
-                        entry["amount"] = expense_amount
-                        break
+                index = int(edit_item.split(":")[0])
+                entry = expense[index]
+
+                entry["description"] = description
+                entry["category"] = category
+                entry["date"] = date
+                entry["amount"] = round(expense_amount, 2)
                 save_expense_data(expense)
                 st.toast(f"'{edit_item}' Successfully Editted!")
                 st.rerun()

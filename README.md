@@ -6,7 +6,7 @@ Budget Buddy v1 is a flexible financial software/website application that allows
 
 ### 1. Dynamic Dashboard Page
 
-Budget Buddy v1 features a dynamic dashboard page that displays a summary of the month's finances. It automatically calculates the total budget, the total amount spent, and the remaining amount in your budget after factoring in expenditures. Additionally, the right navigation sidebar includes options such as add new budget, delete a budget, and edit budget, to adding further practicality to the application.
+Budget Buddy v1 features a dynamic dashboard page that displays a summary of the month's finances. It automatically calculates the total budget, the total amount spent, and the remaining amount in your budget after factoring in expenditures. Additionally, the left navigation sidebar includes options such as add new budget, delete a budget, and edit budget, to adding further practicality to the application.
 
 It also comes with a custom table that displays each category's budget allocation and how much you've spent on that category. If you have exceeded that category's allocation, a bright red mark will be there to remind you to watch your spending!
 

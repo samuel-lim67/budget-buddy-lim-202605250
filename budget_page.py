@@ -100,11 +100,8 @@ def delete_category(category_):
 def edit_category(category_, allocation_):
     remaining = remaining_budget()
     new_name = st.text_input("Name", placeholder = category_)
-    if allocation_ >= remaining:
-        max = allocation_
-    elif remaining > allocation_:
-        max = remaining
-    new_allocation = st.number_input("Amount Allocated", min_value=0.0, max_value=float(max), step=100.0, value=float(allocation_))
+    max_allocation = remaining + allocation_
+    new_allocation = st.number_input("Amount Allocated", min_value=0.0, max_value=float(max_allocation), step=100.0, value=float(allocation_))
     save, cancel = st.columns(2)
     with save:
         if st.button("Save"):

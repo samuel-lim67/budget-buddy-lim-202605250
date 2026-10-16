@@ -1,12 +1,11 @@
 date,month,category,description,amount
-2027-01-01,January 2027,Savings,fart,300.0
-2027-01-12,January 2027,Entertainment,Movie tickets,450.0
-2027-01-15,January 2027,Food,Weekly groceries,1400.0
+2027-01-01,January 2027,Savings,Weekly Groceries,600.0
+2027-01-01,January 2027,Savings,Fart,300.0
 2027-01-18,January 2027,Miscellaneous,Notebook and pens,150.0
 2027-01-20,January 2027,Transportation,Jeepney fare for the week,300.0
-2027-01-22,January 2027,Utilities,Water bill,450.0
+2027-01-06,January 2027,Miscellaneous,Electricity Bill,500.0
 2027-01-25,January 2027,Entertainment,Streaming subscription,199.0
-2027-01-28,January 2027,Food,Dinner out with friends,680.0
+2027-01-01,January 2027,Savings,amongus,100.0
 2027-02-04,February 2027,Transportation,Grab ride to campus,220.0
 2027-02-06,February 2027,Savings,Transfer to savings account,3500.0
 2027-02-11,February 2027,Food,Lunch with classmates,300.0
@@ -18,3 +17,5 @@ date,month,category,description,amount
 2027-01-13,January 2027,Utilities,Farty poopoo,300.0
 2027-02-01,February 2027,test,qaeqwe,300.0
 2027-01-01,January 2027,Utilities,fartty,200.0
+2027-01-01,January 2027,Savings,Lunch with Friends,200.0
+2027-01-01,January 2027,Savings,Weekly Groceries,300.0
